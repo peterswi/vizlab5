@@ -100,7 +100,8 @@ d3.csv('coffee-house-chains.csv', d3.autoType).then(data => {
 
 // (Later) Handling the type change
 function onchange(e) {
-    update(e.target.value)
+    console.log(e.target.value)
+    type=e.target.value
 }
 document.querySelector('#group-by').addEventListener('change',onchange)
 
