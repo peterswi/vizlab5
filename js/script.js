@@ -49,7 +49,7 @@ svg.append('text')
 
 // (Later) Define update parameters: measure type, sorting direction
 let type = document.querySelector('#group-by').value
-console.log(type)
+
   
 const fillColor=d3.scaleOrdinal(d3.schemeCategory10)
 
@@ -57,9 +57,12 @@ const fillColor=d3.scaleOrdinal(d3.schemeCategory10)
 function update(data, type){
     // update domains
     const names=[...  new Set(data.map(data=>data.company))]
+    ///is this working
     xScale.domain(names)
-
-	yScale.domain([0,d3.max(data, d=>d[type])])
+    console.log(type)
+    console.log(data)
+    yScale.domain([0,d3.max(data, d=>d[type])])
+  
 	// update bars
     const bars = svg.selectAll('.bar')
         .data(data, function(d){return d.company})
@@ -78,7 +81,7 @@ function update(data, type){
     
     xAxis.scale(xScale)
 
-    yAxis.scale(yScale)
+    yAxis.scale(yScale.domain([0,d3.max(data, d=>d[type])]))
        
 
     svg.append('text')
