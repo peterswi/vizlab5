@@ -20,7 +20,7 @@ const xScale=d3.scaleBand()
     .paddingInner(0.15)
     
 const yScale=d3.scaleLinear()
-    .range([height, 20])
+    .range([height, 0])
 
 const xAxis = d3.axisBottom()
     .scale(xScale)
@@ -61,27 +61,56 @@ function update(data, type){
     xScale.domain(names)
     console.log(type)
     console.log(data)
-    yScale.domain([0,d3.max(data, d=>d[type])])
-  
-	// update bars
-    const bars = svg.selectAll('.bar')
-        .data(data, function(d){return d.company})
-        .enter()
-        .append('rect')
-        .attr('x',d=>xScale(d.company))
-        .attr('y',d=>yScale(d[type]))
-        .attr('width', xScale.bandwidth())
-        .attr('height', height)
-        .style('fill',d=>fillColor(d.company))
+    
+    console.log(data.type)
+    // update bars
+    if(type=='stores'){
+        console.log('here')
+        yScale.domain([0,d3.max(data, d=>d.stores)])
+        
+        bars = svg.selectAll('.bar')
+            .data(data, function(d){return d.company})
+            .enter()
+            .append('rect')
+            .attr('x',d=>xScale(d.company))
+            .attr('y',d=>yScale(d.stores))
+            .attr('width', xScale.bandwidth())
+            .attr('height', d=>height-yScale(d.stores))
+            .style('fill',d=>fillColor(d.company))
+        
+        x=svg.select('.x-axis')
+            .call(xAxis)
+        y=svg.select('.y-axis')
+            .call(yAxis)
+
+        
+        
+    }
+    else{
+        console.log('there')
+        yScale.domain([0,d3.max(data, d=>d.revenue)])
+        const bars = svg.selectAll('.bar')
+            .data(data, function(d){return d.company})
+            .enter()
+            .append('rect')
+            .attr('x',d=>xScale(d.company))
+            .attr('y',d=>yScale(d.revenue))
+            .attr('width', xScale.bandwidth())
+            .attr('height', d=> height - yScale(d.revenue))
+            .style('fill',d=>fillColor(d.company))
+        
+        xAxis.scale(xScale)
+
+        yAxis.scale(yScale.domain([0,d3.max(data, d=>d.revenue)]))
+    }
+    
 
      // Implement the enter-update-exist sequence
 
 
     // update axes and axis title
     
-    xAxis.scale(xScale)
-
-    yAxis.scale(yScale.domain([0,d3.max(data, d=>d[type])]))
+    
        
 
     svg.append('text')
@@ -100,11 +129,14 @@ d3.csv('coffee-house-chains.csv', d3.autoType).then(data => {
 	update(data, type); // simply call the update function with the supplied data**
 });
 
-
 // (Later) Handling the type change
 function onchange(e) {
     console.log(e.target.value)
     type=e.target.value
+    d3.csv('coffee-house-chains.csv', d3.autoType).then(data => {
+	    update(data, type); // simply call the update function with the supplied data**
+    });
+    
 }
 document.querySelector('#group-by').addEventListener('change',onchange)
 
