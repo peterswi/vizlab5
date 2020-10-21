@@ -56,7 +56,9 @@ const fillColor=d3.scaleOrdinal(d3.schemeCategory10)
 // CHART UPDATE FUNCTION -------------------**
 function update(data, type){
     // update domains
-    const names=[...  new Set(data.map(data=>data.company))]
+    const names=data.map(data=>data.company)
+    
+    console.log(names)
     ///is this working
     xScale.domain(names)
     
@@ -115,8 +117,16 @@ function update(data, type){
         .attr('class','yaxisTitle')
         .attr('x', 30)
         .attr('y',0 )
-        .text(type)
+        .text(function(){
+            if(type=='stores'){
+                return 'Stores Worldwide'
+            }
+            else{
+                return 'Total Revenue'
+            }
+        })
         .style('text-anchor','middle')
+      
 
 }
 
