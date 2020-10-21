@@ -59,10 +59,7 @@ function update(data, type){
     const names=[...  new Set(data.map(data=>data.company))]
     ///is this working
     xScale.domain(names)
-    console.log(type)
-    console.log(data)
     
-    console.log(data.type)
     // update bars
     if(type=='stores'){
         console.log('here')
@@ -80,10 +77,9 @@ function update(data, type){
         
         x=svg.select('.x-axis')
             .call(xAxis)
-        y=svg.select('.y-axis')
-            .call(yAxis)
 
-        
+        y=svg.select('.y-axis')
+            .call(yAxis)      
         
     }
     else{
@@ -99,9 +95,11 @@ function update(data, type){
             .attr('height', d=> height - yScale(d.revenue))
             .style('fill',d=>fillColor(d.company))
         
-        xAxis.scale(xScale)
+        x=svg.select('.x-axis')
+            .call(xAxis)
 
-        yAxis.scale(yScale.domain([0,d3.max(data, d=>d.revenue)]))
+        y=svg.select('.y-axis')
+            .call(yAxis) 
     }
     
 

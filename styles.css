@@ -10,3 +10,10 @@ div{
     color: purple;
     text-align: center;
 }
+#group-by{
+    background-color: ghostwhite;
+    text-align: center;
+    outline-width: 10px;
+    width: 250px;
+    display: inline-block;
+}
