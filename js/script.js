@@ -56,10 +56,12 @@ const fillColor=d3.scaleOrdinal(d3.schemeCategory10)
 // CHART UPDATE FUNCTION -------------------**
 function update(data, type){
     // update domains
-    const names=data.map(data=>data.company)
+    const bars=svg.selectAll('.bar')
+        .remove()
+        .exit()
+        .data(data)
     
-    console.log(names)
-    ///is this working
+    const names=data.map(data=>data.company)
     xScale.domain(names)
     
     // update bars
@@ -67,10 +69,9 @@ function update(data, type){
         console.log('here')
         yScale.domain([0,d3.max(data, d=>d.stores)])
         
-        bars = svg.selectAll('.bar')
-            .data(data, function(d){return d.company})
-            .enter()
+        bars.enter()
             .append('rect')
+            .attr('class','bars')
             .attr('x',d=>xScale(d.company))
             .attr('y',d=>yScale(d.stores))
             .attr('width', xScale.bandwidth())
@@ -87,10 +88,10 @@ function update(data, type){
     else{
         console.log('there')
         yScale.domain([0,d3.max(data, d=>d.revenue)])
-        const bars = svg.selectAll('.bar')
-            .data(data, function(d){return d.company})
-            .enter()
+        
+        bars.enter()
             .append('rect')
+            .attr('class','bars')
             .attr('x',d=>xScale(d.company))
             .attr('y',d=>yScale(d.revenue))
             .attr('width', xScale.bandwidth())
@@ -112,7 +113,7 @@ function update(data, type){
     
     
        
-
+    svg.select("text.yaxisTitle").remove();
     svg.append('text')
         .attr('class','yaxisTitle')
         .attr('x', 30)
@@ -139,7 +140,7 @@ d3.csv('coffee-house-chains.csv', d3.autoType).then(data => {
 
 // (Later) Handling the type change
 function onchange(e) {
-    console.log(e.target.value)
+   
     type=e.target.value
     d3.csv('coffee-house-chains.csv', d3.autoType).then(data => {
 	    update(data, type); // simply call the update function with the supplied data**
