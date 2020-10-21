@@ -164,7 +164,6 @@ d3.csv('coffee-house-chains.csv', d3.autoType).then(data => {
 
 // (Later) Handling the type change
 function onchange(e) {
-    console.log(dataLoad)
     type=e.target.value
     update(dataLoad,type)
     
