@@ -70,6 +70,7 @@ function update(data, type){
         yScale.domain([0,d3.max(data, d=>d.stores)])
         
         bars.enter()
+           
             .append('rect')
             .attr('class','bars')
             .attr('x',d=>xScale(d.company))
@@ -90,7 +91,9 @@ function update(data, type){
         yScale.domain([0,d3.max(data, d=>d.revenue)])
         
         bars.enter()
-            .append('rect')
+            .transition() 
+            .duration(2000)
+            
             .attr('class','bars')
             .attr('x',d=>xScale(d.company))
             .attr('y',d=>yScale(d.revenue))
