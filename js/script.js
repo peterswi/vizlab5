@@ -1,4 +1,5 @@
-//EVERYTHING HERE IS LIKE SEMI FUNCTIONAL
+//WILL PETERS
+//LAB 5
 
 // CHART INIT ------------------------------**
 
@@ -49,7 +50,7 @@ svg.append('text')
 
 // (Later) Define update parameters: measure type, sorting direction
 let type = document.querySelector('#group-by').value
-
+let sort=-1
   
 const fillColor=d3.scaleOrdinal(d3.schemeCategory10)
 
@@ -60,6 +61,12 @@ var keyFunction=function(d){
 
 function update(data, type){
     // update domains
+    if(type=='stores'){
+        data=data.sort((a,b)=>(a.stores - b.stores)*sort)
+    }
+    else{
+        data=data.sort((a,b)=>(a.revenue - b.revenue)*sort)
+    }
     
     xScale.domain(data.map(d=>keyFunction(d)))
 
@@ -68,7 +75,7 @@ function update(data, type){
     
     // update bars
     if(type=='stores'){
-        console.log('here')
+        
         yScale.domain([0,d3.max(data, d=>d.stores)])
         
         bars.enter()   
@@ -101,7 +108,7 @@ function update(data, type){
         
     }
     else{
-        console.log('there')
+        
         yScale.domain([0,d3.max(data, d=>d.revenue)])
         
         bars.enter()
@@ -168,6 +175,11 @@ function onchange(e) {
     update(dataLoad,type)
     
 }
+function sortChange(e){
+    sort= -1 * sort
+    update(dataLoad, type)
+}
 document.querySelector('#group-by').addEventListener('change',onchange)
+document.querySelector('#sort').addEventListener('click',sortChange)
 
 // (Later) Handling the sorting direction change
