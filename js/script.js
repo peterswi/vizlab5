@@ -129,9 +129,13 @@ function update(data, type){
             .remove()
         
         svg.select('.x-axis')
+            .transition()
+            .duration(1000)
             .call(xAxis)
 
         svg.select('.y-axis')
+            .transition()
+            .duration(1000)
             .call(yAxis) 
     }
     
