@@ -54,24 +54,28 @@ let type = document.querySelector('#group-by').value
 const fillColor=d3.scaleOrdinal(d3.schemeCategory10)
 
 // CHART UPDATE FUNCTION -------------------**
+var keyFunction=function(d){
+    return d.company
+}
+
 function update(data, type){
     // update domains
-    const bars=svg.selectAll('.bar')
-        .remove()
-        .exit()
-        .data(data)
     
-    const names=data.map(data=>data.company)
-    xScale.domain(names)
+    xScale.domain(data.map(d=>keyFunction(d)))
+
+    const bars=svg.selectAll('rect')
+        .data(data, keyFunction)
     
     // update bars
     if(type=='stores'){
         console.log('here')
         yScale.domain([0,d3.max(data, d=>d.stores)])
         
-        bars.enter()
-           
+        bars.enter()   
             .append('rect')
+            .merge(bars)
+            .transition()
+            .duration(1000)
             .attr('class','bars')
             .attr('x',d=>xScale(d.company))
             .attr('y',d=>yScale(d.stores))
@@ -79,10 +83,20 @@ function update(data, type){
             .attr('height', d=>height-yScale(d.stores))
             .style('fill',d=>fillColor(d.company))
         
-        x=svg.select('.x-axis')
+        bars.exit()
+            .transition()
+            .duration(100)
+            .remove()
+
+
+        svg.select('.x-axis')
+            .transition()
+            .duration(1000)
             .call(xAxis)
 
-        y=svg.select('.y-axis')
+        svg.select('.y-axis')
+            .transition()
+            .duration(1000)
             .call(yAxis)      
         
     }
@@ -91,9 +105,10 @@ function update(data, type){
         yScale.domain([0,d3.max(data, d=>d.revenue)])
         
         bars.enter()
-            .transition() 
-            .duration(2000)
-            
+            .append('rect')
+            .merge(bars)
+            .transition()
+            .duration(1000)    
             .attr('class','bars')
             .attr('x',d=>xScale(d.company))
             .attr('y',d=>yScale(d.revenue))
@@ -101,10 +116,15 @@ function update(data, type){
             .attr('height', d=> height - yScale(d.revenue))
             .style('fill',d=>fillColor(d.company))
         
-        x=svg.select('.x-axis')
+        bars.exit()
+            .transition()
+            .duration(1000)
+            .remove()
+        
+        svg.select('.x-axis')
             .call(xAxis)
 
-        y=svg.select('.y-axis')
+        svg.select('.y-axis')
             .call(yAxis) 
     }
     
@@ -119,14 +139,14 @@ function update(data, type){
     svg.select("text.yaxisTitle").remove();
     svg.append('text')
         .attr('class','yaxisTitle')
-        .attr('x', 30)
+        .attr('x', 40)
         .attr('y',0 )
         .text(function(){
             if(type=='stores'){
-                return 'Stores Worldwide'
+                return '# Stores Worldwide'
             }
             else{
-                return 'Total Revenue'
+                return 'Revenue in Billions $'
             }
         })
         .style('text-anchor','middle')
@@ -138,16 +158,15 @@ function update(data, type){
 
 // Loading data
 d3.csv('coffee-house-chains.csv', d3.autoType).then(data => {
+    dataLoad=data
 	update(data, type); // simply call the update function with the supplied data**
 });
 
 // (Later) Handling the type change
 function onchange(e) {
-   
+    console.log(dataLoad)
     type=e.target.value
-    d3.csv('coffee-house-chains.csv', d3.autoType).then(data => {
-	    update(data, type); // simply call the update function with the supplied data**
-    });
+    update(dataLoad,type)
     
 }
 document.querySelector('#group-by').addEventListener('change',onchange)
